@@ -1,6 +1,6 @@
 # C Dili Özet Notlar
 
-Bu repo, C programlama dili üzerine temel ve ileri düzey konuları içeren özet notları, örnek kodları ve ipuçlarını içerir.
+C programlama dili üzerine temel ve ileri düzey konuları içeren özet notları, örnek kodları ve ipuçlarını içerir.
 
 
 
