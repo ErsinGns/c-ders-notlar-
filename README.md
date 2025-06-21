@@ -7,5 +7,5 @@ Bu repo, C programlama dili üzerine temel ve ileri düzey konuları içeren öz
 
 ## Kaynakça
 
-https://github.com/CSD-1993/KursNotlari/blob/master/C-OzetNotlar-Ornekler.txt
-Necati Ergin dersleri
+-> https://github.com/CSD-1993/KursNotlari/blob/master/C-OzetNotlar-Ornekler.txt
+-> Necati Ergin dersleri
