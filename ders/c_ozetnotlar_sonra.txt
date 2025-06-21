@@ -1,0 +1,1360 @@
+
+
+
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Aslında scanf fonksiyonun da bir geri dönüş değeri vardır. scanf fonksiyonu başarılı bir biçimde yerleştirilen parça sayısı ile geri dönmektedir. 
+	scanf stdin tamponunun başındaki boşluk karakterlerini (leading space) atar. Sonra format karakterlerine uygun olmayan ilk karakter gördüğünde 
+	onu tampona geri bırakıp işlemini sonlandırır. Örneğin:
+
+	result = scanf("%d", &val);
+
+	Burada biz bir sayı yerine "ali" bir yazı girmiş olalım. Bu durumda scanf a karakterini tampondan aldığında bunun %d format karakterine uygun olmadığını tespit eder. 
+	Bu a karakterini tampona geri bırakıp 0 değeri ile geri döner. Örneğin:
+
+	result = scanf("%d%d", &a, &b);
+
+	Burada klavyeden şunları girmiş olalım:
+
+	100 ali
+
+	scanf burada yalnızca a için yerleştirme yapabilecektir. Tamponda ali kalacaktır ve b için yerleştirme yapmayacaktır. Bu durumda scanf 1 değeri ile geri dönecektir. 
+	Bu nedenle aşağıdaki örnekte eğer biz klavyeden bir syaı girmezsek sonsuz döngü oluşacaktır:
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	int val;
+	
+	while (scanf("%d", &val), val != 0)
+		printf("%d\n", val * val);
+
+	return 0;
+}
+
+
+#include <stdio.h>
+
+int main(void)
+{
+	int val;
+	
+	while (scanf("%d", &val) && val != 0)
+		printf("%d\n", val * val);
+
+	return 0;
+
+
+}
+#include <stdio.h>
+
+void clear_stdin(void)
+{
+	while (getchar() != '\n')
+		;
+}
+
+int main(void)
+{
+	int ch;
+
+	do {
+		printf("(e)vet/(h)ayir?");
+		ch = getchar();
+		if (ch != '\n')
+			clear_stdin();
+	} while (ch != 'e' && ch != 'h');
+
+	if (ch == 'e')
+		printf("evet\n");
+	else
+		printf("hayir\n");
+
+	return 0;
+}
+
+#include <stdio.h>
+
+int get_command(void)
+{
+	int ch;
+
+	while ((ch = getchar()) == ' ' || ch == '\t')
+		;
+
+	if (ch != '\n')
+		while (getchar() != '\n')
+			;
+
+	return ch;
+}
+
+#include <stdio.h>
+
+int main(void)
+{
+	int ch;
+
+	for (int i = 0; i < 10; ++i) {
+		for (int k = 0; k < 10; ++k) {
+			printf("(%d,%d)\n", i, k);
+			printf("press q to exit:");
+			ch = getchar();
+			if (ch == 'q')
+				goto EXIT;
+			if (ch != '\n')
+				while (getchar() != '\n')
+					;
+		}
+	}
+
+EXIT:
+	return 0;
+}
+
+
+
+
+Dizilerin sıraya dizilmesine İngilizce "sorting" denilmektedir. Dizileri sıraya dizmek için pek çok algoritma vardır. Bunlardan en yalını 
+	"kabarcık sıralaması (bubble sort)" denilen yöntemdir. Bu yöntemde yan yana iki eleman karşılaştırılır. Duruma göre yer değiştirilir. Bu işlem bir kez
+	yapıldığında dizi sıraya dizilmiş olmaz. Ancak en büyük eleman (ya da en küçük eleman) sona gider. O halde bu işlemi diziyi daraltarak tekrar tekrar yapmak 
+	gerekir. Algoritmanın döngü yapısı şöyledir: Dizinin uzunluğu n olmak üzere iç içe iki döngü vardır. Dıştaki döngü n - 1 kez, içteki döngü n - 1 - i kez 
+	döndürülür. 
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+
+#define SIZE        10
+
+int main(void)
+{  
+    int a[SIZE] = {23, 12, 76, 45, 23, 65, 11, 98, 42, 81};
+    int temp;
+  
+    for (int i = 0; i < SIZE - 1; ++i)
+        for (int k = 0; k < SIZE - 1 - i; ++k) 
+            if (a[k + 1] < a[k]) {
+                temp = a[k];
+                a[k] = a[k + 1];
+                a[k + 1] = temp;
+            }
+
+    for (int i = 0; i < SIZE; ++i)
+        printf("%d ", a[i]);
+    printf("\n");
+
+    return 0;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Kabarcık sıralamasının değişik gerçekleştirimi yapılabilir. Örneğin eğer yan yana elemanlar karşılaştırılıp hiç yer değiştirme yapılmıyorsa 
+	dizi zaten sıraya dizilmiş demektir. Döngünün devam ettirilmesine gerek yoktur. 
+
+	Aşağıdaki gerçekleştirimde eğer dizi zaten sıraya dizilmişse dış döngü devam ettirilmemektedr.
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+
+#define SIZE        10
+
+#define TRUE        1
+#define FALSE       0
+
+int main(void)
+{  
+    int a[SIZE] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    int temp;
+    int replace_flag;
+  
+    for (int i = 0; i < SIZE - 1; ++i) {
+        replace_flag = FALSE;
+        for (int k = 0; k < SIZE - 1 - i; ++k)
+            if (a[k + 1] < a[k]) {
+                temp = a[k];
+                a[k] = a[k + 1];
+                a[k + 1] = temp;
+                replace_flag = TRUE;
+            }
+        if (!replace_flag)
+            break;
+    }
+
+    for (int i = 0; i < SIZE; ++i)
+        printf("%d ", a[i]);
+    printf("\n");
+
+    return 0;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Yukarıdaki biçim do-while döngüsüyle de ifade edilebilir.
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+
+#define SIZE        10
+
+#define TRUE        1
+#define FALSE       0
+
+int main(void)
+{  
+    int a[SIZE] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    int temp;
+    int replace_flag;
+    int n = SIZE - 1;
+  
+    do {
+        replace_flag = FALSE;
+        for (int k = 0; k < n; ++k)
+            if (a[k + 1] < a[k]) {
+                temp = a[k];
+                a[k] = a[k + 1];
+                a[k + 1] = temp;
+                replace_flag = TRUE;
+            }
+        --n;
+    } while (replace_flag);
+
+    for (int i = 0; i < SIZE; ++i)
+        printf("%d ", a[i]);
+    printf("\n");
+
+    return 0;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Diğer çok bilinen bir sıralama yöntemine "seçerek sıralama (selection sort)" denilmektedir. Bu yöntemde dizinin en küçük elemanı bulunur. İlk elemanla
+	yer değiştirilir. Sonra dizi daraltılır. Aynı daraltılmış dizi için yapılır. İşlemler böyle böyle devam ettirilir. Örneğin:
+
+	| 8 3 6 1 5
+
+	1 | 3 6 8 5
+	1 3 | 6 8 5
+	1 3 5 | 8 6
+	1 3 5 6 | 8
+
+	Bu algoritmada iç içe iki döngü kullanılır. Dıştaki döngü diziyi daraltmakta kullanılır. İçteki döngü ise daraltılmış dizinin en küçük elemanını 
+	bulup daraltılmış dizinin ilk elemanı ile yer değiştirir.
+
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+
+#define SIZE        10
+
+int main(void)
+{  
+    int a[SIZE] = {10, 9, 8, 7, 6, 5, 4, 3, 2, 1};
+    int min, min_index;
+    
+    for (int i = 0; i < SIZE - 1; ++i) {
+        min = a[i];
+        min_index = i;
+        for (int k = i + 1; k < SIZE; ++k) 
+            if (a[k] < min) {
+                min = a[k];
+                min_index = k;
+            }
+        a[min_index] = a[i];
+        a[i] = min;
+    }
+
+    for (int i = 0; i < SIZE; ++i)
+        printf("%d ", a[i]);
+    printf("\n");
+
+    return 0;
+}
+
+/
+
+
+
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	* ve [] operatörlerinin ++ ve -- operatörleriyle işleme sokulmasında programcılar tarafından bazı tereddütler oluşabilmektedir. Biz de bu tereddütleri 
+	gidermek için bazı açıklamalar yapacağız. 
+
+	1) [] operatörünün ++ ve -- operatörleriyle kullanımı
+
+	a) ++p[i] ifadesinde p[i] bir artırılmaktadır. Benzer biçimde a = p[i]++ ifadesinde de p[i]'nin değeri a'ya atanıp p[i] bir artırılacaktır.
+	
+	b) (++p)[i] ifadesinde önce p bir artırılır. Artırılmış adresten i ilerinin içeriğine erişilir. Tabii burada p bir dizi ismi olamaz. Gösteri olmak zorundadır. 
+	
+	c) p[++i] gibi bir ifadede önce i bir artırılır sonra p adresindne artırılmış indeksin belrriği yere erişilir.
+	
+	d) p[i++] Burada i bir artılır ancak [] operatörüne i'nin artırılmamış değeri sokulur. Yani p[i] değerine erişilip i bir artırılacaktır. Örneğin:
+
+	int a[3];
+	int i = 0;
+
+	a[i++] = 10;
+	a[i++] = 20;
+	a[i++] = 30;
+
+	e) p++[i] ifadesinde p bir artırılır (tabii p'nin bir gösterici olması gerekir, p bir dizi ismi olamaz) ancak artırılmamış p'den i ilerinin içeriğine erişilr. 
+
+	2) * operatörü ile ++ ve -- operatörlerinin kullanımı
+
+	a) ++*p ifadesinde önce *p'ye erişilir sonra *p bir artırılır. Yani ifade *p = *p + 1 anlamına gelir. 
+
+	b) a = *p++ gibi bir ifade en çok tereddüt edilen ifadelerin başında gelmektedir. Burada ++'ın operandı *p değildi, p'dir. Dolayısıyla burada a'ye *p 
+	atanır ancak p de bir artırılmış olur. Bunu şöyle de ifade edebiliriz. Burada p bir artırılır ancak * işlemine p'nin artırılmamış hali sokulur. 
+	Bu ifade programlarda çok sık karşımıza çıkar. Örneğin:
+
+	char *mystrcpy(char *dest, char *source)
+	{
+		char *temp = dest;
+
+		while ((*dest++ = *source++) != '\0')
+			;
+
+		return temp;
+	}
+
+	Burada *dest++ = *source++ ifadesinde ++ operatörleri sonek durumundadır. Dolayısıyla source ve dest bir artırılacaktır. Ancak * işlemine bunlarn artmamış değerleri 
+	dokulacaktır. Yani burada aslında *dest = *source işlemi yapılıp source ve dest bir artırılmış gibidir. Karşılaştırma işlemine atanan değer sokulmaktadır. 
+	Dolayısıyla null karakter de önce hedefe atanacak sonra döngüden çıkılacaktır.
+
+	c) a = *++p ifadesinde önce p bir artırılır sonra artmış adresin içeriği a'ya atanır. 
+
+	d) a = (*p)++ ifadesinde ++ operatörünün operandı artık p değildir, *p'dir. Dolayısıyla burada *p bir artırılır ancak sonraki işlem olan atamaya *p'nin 
+	artmamış değeri sokulur. Başka bir deyişle burada *p önce a'ya atanır sonra *p bir artırılır. 
+
+
+	Aşağıdaki döngüden çıkıldığında str göstericisi nereyi göstermektedir?
+
+	while (*str++ != '\0)
+		;
+
+	Burada str döngüden çıkıldığında null karakterden bir sonrayı gösterecektir. 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+
+
+
+
+
+
+
+
+#include <stdio.h>
+#include <string.h>
+
+int get_word_count(char *text)
+{
+    int count = 0;
+
+    for (;;) {
+        while (*text != '\0' && strchr(";!.,?-*()/ ", *text) != NULL)
+            ++text;
+        if (*text == '\0')
+            break;
+        ++count;
+        while (strchr(";!.,?-*()/ ", *text) == NULL)
+            ++text;
+      
+        if (*text == '\0')
+            break; 
+    }
+
+    return count;
+}
+
+int main(void)
+{
+    char s[] = ";;;;;;   bugun hava guzel! cok guzel...Evet ,,, evet 234 guzel. Sence ali   ";
+    int result;
+
+    result = get_word_count(s);
+    printf("%d\n", result);
+
+    return 0;
+}
+
+
+include <stdio.h>
+#include <math.h>
+
+void num2text(int number, char *buf)
+{
+	char *ones[] = {"", "bir", "iki", "uc", "dort", "bes", "alti", "yedi", "sekiz", "dokuz"};
+	char *tens[] = {"", "on", "yirmi", "otuz", "kirk", "elli", "altmis", "yetmis", "seksen", "doksan"};
+	int one, ten, hundred;
+	int index = 0;
+
+	if (number == 0) {
+		strcpy(buf, "sifir");
+		return;
+	}
+
+	one = number % 10;
+	ten = number / 10 % 10;
+	hundred = number / 100;
+
+	if (hundred > 0) {
+		if (hundred != 1)
+			index += sprintf(buf + index, "%s ", ones[hundred]);
+		index += sprintf(buf + index, "yuz");
+	}
+	if (ten > 0) {
+		if (hundred > 0)
+			buf[index++] = ' ';
+		index += sprintf(buf + index, "%s", tens[ten]);
+	}
+	if (one > 0) {
+		if (number > 10)
+			buf[index++] = ' ';
+		index += sprintf(buf + index, "%s", ones[one]);
+	}
+}
+
+int main(void)
+{
+	int number;
+	char str[1024];
+
+	for (;;) {
+		printf("En fazla 3 basamakli bir sayi giriniz:");
+		scanf("%d", &number);
+		if (number == -1)
+			break;
+		if ((int)log10(number) + 1 > 3) {
+			printf("sayi 3 basamaktan buyuk!\n");
+			continue;
+		}
+
+		num2text(number, str);
+		printf(":%s:\n", str);
+	}
+
+	return 0;
+}
+ 
+Şimdi de rastgele sayı üreterek PI sayısını bulan ilginç bir örnek yapalım. Birim çemberin dörtte birini düşünelim. Bu dörtte birlik bölgedeki kare
+	nin alanı 1'dir. Bu dörtte birlik daire diliminin alanı ise pi / 4'tür. Biz 0 ile 1 arasında N tane rastgele nokta üretirsek bu nokta karenin içerisinde olacaktır. 
+	Ancak çemberin içerisinde olmayabilir. KArenin içerisinde olanların çemberin içerisinde olanlara oranı bunların alanlarının oranı kadar olmalıdır. Bu duurmda
+	N toplam elde edilen nokta sayısını, k ise bunoktaların dörtte birlik çember içerisinde kalanlarının sayısını belirtiyor olsun. Bu durumda
+
+	1 / (pi /4) = N / k olmalıdır. İçler dışlar çarpımıyla pi'yi çekersek şu eşitliği elde ederiz:
+
+	pi = 4 * k / n
+
+	Aşağıda örnek verilmiştir.
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+#include <time.h>
+
+#define N		10000000
+
+int main(void)
+{
+	double x, y;
+	unsigned long long k;
+	double pi;
+
+	srand(time(NULL));
+
+	k = 0;
+	for (unsigned long long i = 0; i < N; ++i) {
+		x = (double)rand() / RAND_MAX;
+		y = (double)rand() / RAND_MAX;
+		if (sqrt(pow(x, 2) + pow(y, 2)) < 1)
+			++k;
+	}
+
+	pi = 4. * k / N;
+	printf("%f\n", pi);
+
+	return 0;
+}
+
+
+
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Hem bir tuşa basılana kadar programımın beklememesi hem de tuş okuması nasıl yapabiliriz? Bu işlemi yapabilen standart C fonksiyonları yoktur. 
+	Microsoft'un Windows C kütüphanesinde _kbhit isimli bir fonksiyon bulunmaktadır. Bu fonksiyonun benzeri Curses kütüphanesinde de vardır. 
+	Bu fonksiyon o anda klavyede tuşa basılı olup olmadığı bilgisini verir. O halde tuşa basılmışsa tuşu okursak istediğimizi yapabiliriz. Örneğin:
+
+	if (_kbhit()) {
+		ch = _getch();
+		...
+	}
+
+	Aşağıdaki örnekte bir '*' belli yönde hareket etmekte 'w', 's', 'z', 'a' tuşları ile onn yönü değiştirilmektedir. Kod içerisinde Sleep isimli bir 
+	Windows API fonksiyonu daha kullanımıştır. Bu fonksiyon programın akışını parametresiyle belirtilen milisaniye kadar bekletmektedir. Bu fonksiyonun UNIX/Linux ve
+	macOS sistemlerinde de benzerleri vardır.
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <Windows.h>
+#include <conio.h>
+
+#define UP			0
+#define RIGHT		1
+#define DOWN		2
+#define LEFT		3
+
+void get_console_size(int *height, int *width)
+{
+	CONSOLE_SCREEN_BUFFER_INFO csbi;
+
+	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+	*width = csbi.srWindow.Right - csbi.srWindow.Left + 1;
+	*height = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
+}
+
+void hide_cursor(void)
+{
+	CONSOLE_CURSOR_INFO cinfo;
+
+	cinfo.dwSize = 100;
+	cinfo.bVisible = FALSE;
+
+	SetConsoleCursorInfo(GetStdHandle(STD_OUTPUT_HANDLE), &cinfo);
+}
+
+void writec(int row, int col, char ch)
+{
+	COORD coord = {col, row};
+	DWORD dw;
+
+	WriteConsoleOutputCharacterA(GetStdHandle(STD_OUTPUT_HANDLE), &ch, 1, coord, &dw);
+}
+
+int main(void)
+{
+	int rowsize, colsize;
+	int row, col;
+	int direction;
+	int ch;
+
+	get_console_size(&rowsize, &colsize);
+	hide_cursor();
+
+	row = 10, col = 10;
+	direction = RIGHT;
+
+	for (;;) {
+		writec(row, col, '*');
+
+		Sleep(100);
+
+
+		if (_kbhit()) {
+			ch = _getch();
+			switch (ch) {
+				case 'w':
+					direction = UP;
+					break;
+				case 's':
+					direction = RIGHT;
+					break;
+				case 'z':
+					direction = DOWN;
+					break;
+				case 'a':
+					direction = LEFT;
+					break;
+				case 'p':
+		  		    _getch();
+					break;
+				case 'q':
+					goto EXIT;
+			}
+		}
+
+		writec(row, col, ' ');
+
+		switch (direction) {
+			case UP:
+				if (row == 0)
+					row = rowsize - 1;
+				else
+					--row;
+				break;
+			case RIGHT:
+				if (col == colsize - 1)
+					col = 0;
+				else
+					++col;
+				break;
+			case DOWN:
+				if (row == rowsize - 1)
+					row = 0;
+				else
+					++row;
+				break;
+			case LEFT:
+				if (col == 0)
+					col = colsize - 1;
+				else
+					--col;
+				break;
+		}
+	}
+EXIT:
+	
+	return 0;
+}
+
+
+	Anımsanacağı gibi hiçbir fonksiyon yerel değişkenin ya da dizinin adresiyle geri dönmemeliydi. Örneğin:
+
+	char *getname(void)
+	{
+		char name[1024];
+
+		printf("Adi soyadi:");
+		gets(name);
+
+		return name;
+	}
+
+	Burada getname fonksiyonu yerel name dizisinin adresiyle geri dönmüştür. Ancak fonksiyon bittiğinde fonksiyonun yerel değişkenleri yok edileceğinden
+	namme dizisi de yok edilecektir. O halde geri döndürülen adres aslında artık tahsis edilmiş olan bir adres olmayacaktır. 
+
+	Ancak bir fonksiyon dinamik bir biçimde tahsis ettiği bir alanın adresiyle geri dönebilir. Örneğin:
+
+	char *getname(void)
+	{
+		char name[1024];
+		char *str;
+
+		printf("Adi soyadi:");
+		gets(name);
+
+		if ((str = (char *)malloc(strlen(name) + 1)) == NULL)
+			return NULL;
+
+		strcpy(str, name);
+
+		return str;   
+	}
+
+	Burada bir sorun yoktur. Çünkü getname fonksiyonu dinamik tahsis edilmiş alanın başlanıç adresiyle geri dönmektedir. Fonksiyon bittiğinde
+	bu dinamik alan yaşamaya devam edecektir. Burada yerel dizi kullanılmasının nedeni malloc fonksiyonuyla tam gereken miktarda byte tahsis etmek içindir. 
+	name dizisi nasıl olsa fonksiyon bittiğinde yok edilecektir. Ancak dinamik alan tahsis edilmiş olarak kalacaktır. Tabii burada getname fonksiyonun geri döndürdüğü
+	dinamik alanın free hale getirilmesi getname fonksiyonunu çağıranın sorumluluğundadır.
+
+
+
+
+Yapının içeisindeki dizi isminin de nesne belirtmediğine dikkat ediniz. Örneğin:
+
+	struct PERSON {
+		char name[32];
+		int no;
+	};
+
+	struct PERSON per;
+
+	per.name = "Ali Serce";		/* geçersiz! */
+
+	Burada dizi ismine bir adres atanmak istenmiştir. Bu durum geçersizdir. Böylesi bir şeyi ilkdeğer verme dışında yine strcpy fonksiyonu ile yapmalıyız. 
+	Örneğin:
+
+	struct PERSON per;
+
+	strcpy(per.name, "Ali Serce");
+	per.no = 123;
+
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Yapının elemanı gösterici de olabilir. Ancak tabii yapı nesnesi tanımlandığında bu gösterici içerisinde rastgele bir adres vardır. Örneğin:
+
+	struct PERSON {
+		char *name;
+		int no;
+	};
+
+	struct PERSON per;	
+
+	Burada per nesnesi yerel ise name göstericisinin içerisinde rastgele bir adres, no çerisinde de rastgele bir değr bulunur. Ancak per global ise 
+	name göstericisinin içerisinde NULL adresi, no içerisinde de 0 bulunacaktır. (Anımsanacağı gibi global bir göstericiye değer atanmadıysa içeisinde NULL adres bulunacağı 
+	garanti edilmiştir.) Örneğin:
+
+	struct PERSON per;
+
+	strcpy(per.name, "Ali Serce");		/* dikkat yazı rastgele bir adrese atanıyor */
+
+	Burada "Ali Serce" yazısı per.name adresinden itibaren bellekte rastgele bir yere yerleştirilecektir. Dolayısıyla tanımsız davranış söz konusudur. 
+	Ancak örneğin:
+
+	per.name = "Ali Serce";		/* tamamen normal */
+
+	Burada "Ali Serce" yazısı derleyici tarafından güvenli bir alana yerleştirilip o alanın adresi per.name göstericisine atanmıştır. Dolayısıyla per.name
+	göstericisi güvenli bir yeri göstermektedir. 
+
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+
+struct PERSON {
+	char *name;
+	int no;
+};
+
+int main(void)
+{
+	struct PERSON per;
+
+	per.name = "Ali Serce";				/* tamamen normal, name göstericisine güvenli bir yazının adresi atanıyor */
+	per.no = 123;
+	printf("%s %d\n", per.name, per.no);
+
+	return 0;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Tabii yapının elemanı char türden bir gösterici ise biz yine iki tırnak içerisinde bu elemana ilkdeğer verebiliriz. Şüphesiz bu durumda verilen ilkdeğer 
+	aslında bir adrestir ve gösteriye bu adres atanmış olmaktadır. Örneğin:
+
+	struct PERSON {
+		char *name;
+		int no;
+	};
+
+	struct PERSON per = {"Ali Serce", 123};
+	
+	Burada artık per.name göstericisinin içerisinde "Ali Serce" yazısının başlangıç adresi bulunacaktır. 
+
+
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct PERSON {
+	char name[32];
+	int no;
+};
+
+struct PERSON *get_person(void)
+{
+	struct PERSON *per;
+
+	if ((per = (struct PERSON *)malloc(sizeof(struct PERSON))) == NULL)
+		return NULL;
+
+	printf("Adi soyadi:");
+	gets(per->name);
+	printf("No:");
+	scanf("%d", &per->no);
+
+	while (getchar() != '\n')
+		;
+
+	return per;
+}
+
+int main(void)
+{
+	struct PERSON *per;
+
+	if ((per = get_person()) == NULL) {
+		fprintf(stderr, "cannot allocate memory!..\n");
+		exit(EXIT_FAILURE);
+	}
+
+	printf("%s, %d\n", per->name, per->no);
+
+	free(per);
+
+	return 0;
+}
+	Bir yapı kendisi türünden bir elemana sahipo olamaz. Örneğin:
+
+	struct SAMPLE {
+		int a;
+		int b;
+		struct SAMPLE c;		/* geçersiz! */
+	};
+
+	Eğer böyle bir şey olsaydı bu durumda bu türden bir yapı nesnesi için ne kadar yer ayrılacağı bilinemezdi. Ancak bir yapı kendisi türünden bir gösterici 
+	elemana sahip olabilir:
+
+	struct SAMPLE {
+		int a;
+		int b;
+		struct SAMPLE *c;		/* geçerli */
+	};
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct NODE {
+	int val;
+	struct NODE *next;
+};
+
+struct LLIST {
+	struct NODE *head;
+	struct NODE *tail;
+	size_t count;
+};
+
+struct LLIST *create_llist(void);
+struct NODE *add_item_tail(struct LLIST *llist, int val);
+struct NODE *add_item_head(struct LLIST *llist, int val);
+void clear_llist(struct LLIST *llist);
+void walk_llist(struct LLIST *llist);
+void destroy_llist(struct LLIST *llist);
+size_t count_llist(struct LLIST *llist);
+
+int main(void)
+{
+	struct LLIST *llist;
+
+	if ((llist = create_llist()) == NULL) {
+		fprintf(stderr, "cannot create linked list!..\n");
+		exit(EXIT_FAILURE);
+	}
+
+	for (int i = 0; i < 100; ++i)
+		if (add_item_head(llist, i) == NULL) {
+			fprintf(stderr, "cannot create node!...\n");
+			exit(EXIT_FAILURE);
+		}
+
+	walk_llist(llist);
+
+	destroy_llist(llist);
+
+	return 0;
+}
+
+struct LLIST *create_llist(void)
+{
+	struct LLIST *llist;
+
+	if ((llist = (struct LLIST *)malloc(sizeof(struct LLIST))) == NULL)
+		return NULL;
+
+	llist->head = NULL;
+	llist->tail = NULL;
+	llist->count = 0;
+
+	return llist;
+}
+
+struct NODE *add_item_tail(struct LLIST *llist, int val)
+{
+	struct NODE *newnode;
+
+	if ((newnode = (struct NODE *)malloc(sizeof(struct NODE))) == NULL)
+		return NULL;
+	newnode->val = val;
+	newnode->next = NULL;
+
+	if (llist->head == NULL)
+		llist->head = newnode;
+	else
+		llist->tail->next = newnode;
+	llist->tail = newnode;
+
+	++llist->count;
+
+	return newnode;
+}
+
+struct NODE *add_item_head(struct LLIST *llist, int val)
+{
+	struct NODE *newnode;
+
+	if ((newnode = (struct NODE *)malloc(sizeof(struct NODE))) == NULL)
+		return NULL;
+	newnode->val = val;
+	
+	if (llist->head == NULL)
+		llist->tail = newnode;
+
+	newnode->next = llist->head;
+	llist->head = newnode;
+
+	++llist->count;
+
+	return newnode;
+}
+
+void walk_llist(struct LLIST *llist)
+{
+	struct NODE *node;
+
+	node = llist->head;
+
+	while (node != NULL) {
+		printf("%d ", node->val);
+		node = node->next;
+	}
+	printf("\n");
+}
+
+void clear_llist(struct LLIST *llist)
+{
+	struct NODE *node, *temp;
+
+	node = llist->head;
+
+	while (node != NULL) {
+		temp = node->next;
+		free(node);
+		node = temp;
+	}
+	llist->head = NULL;
+	llist->tail = NULL;
+	llist->count = 0;
+}
+
+void destroy_llist(struct LLIST *llist)
+{
+	clear_llist(llist);
+	free(llist);
+}
+
+size_t count_llist(struct LLIST *llist)
+{
+	return llist->count;
+}
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	auto yer belirleyicisi gereksiz ve bugün için anlamsız bir belirleyicidir. Geçmişe doğru uyumu korumak için hala muhafaza edilmektedir. auto yer belirleyicisi
+	global değişkenlerle ve parametre değişkenleriyle kullanılamaz. Yalnızca yerel değişkenlerle kullanılabilir. Yerel değişkenin blok bittiğinde yol edileceği 
+	anlamına gelir. Zaten yerel değişkenler blok bittiğinde yok edilmektedir. O halde auto belirleyicisinin bir önemi yoktur. C++'ta C++11 ile birlikte 
+	zaten anlamsız olan auto anahtar sözcüğüne "tür belirleyicisi (type specifier)" anlamı yüklenmiştir.
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	register yer belirleyicisi de artık gereksiz bir belirleyici haline gelmiştir. Bu belirleyicinin anlamını anlayabilmek için "register" kavramını bilmek
+	gerekir. CPU'nun içerisinde aritmetik, karşılaştırma, mantılsa ve bit işlemlerini yapan elektrik devreleri (matık devreleri) bulunmaktadır. CPU'nun 
+	bu kısmına "Aritmetik Lojik Birim (Arithmetic Logic Unit)" denir ve İngilizce "ALU" biçiminde kısaltılır. Register (yazmaç) CPU içerisindeki ALU için
+	iskele görevi gören küçük bellek bölgeleridir. Bir işlemin yapılabilmesi için işeleme sokulacak operand bellekten CPU içerisindeki yazmaçlara çekilir. 
+	Çünkü ALU içerisindeki elektrik devreleri girdileri yazmaçlardan alacak biçimde tasarlanmıştır. Bu elektirk devreleri sonucu da yine yazmaçlara yerleştirmektedir. 
+	Yazmaçların uzunlukları ve sayıları CPU'lar için önemlidir. Yazmaçların bir uzunlukları aynı zamanda bir CPU'nun tek hamlede hangi büyüklükte bilgiler üzerinde 
+	işlem yapabileceğini belirtmektedir. "32 bit işlemci" demek tek hamlede 32 bit işlem yapabilen işlemci demektir. Dolayısıyla 32 bit işlemcilerdeki yazmaçlar da 32 bittir. 
+	64 bir iki sayıyı 32 bit işlemcide tek hamlede toplayamayız. Önce onun düşük anlamlı 32 bitini sonra da yüksek anlamlı 32 bitini toplayıp sonucu buluruz. 
+	Halbuki 64 bit bir işlemcide tek hamlede 64 bit iki sayı toplanabilmektedir. DFünyanın ilk mikroişelmsici 1974 yılında üretilen Intel'in 8080'i kabul eedilmektedir. 
+	8080 8 bit bir mikroşlemciydi. Bunu 16 bit 8086, 32 bit 30386 ve 76 bit Pentium'un ileri modelleri izledi. Intel'in 32 bit işlemcilerine aile olarak x86 denilmektedir. 
+	64 bit işlemcilerine ise X64 denilmektedir. ARM işlemcileri de ilkin 32 bir işlemciler olarak tasarlandı. Sonra onlar da 64 bite yükseltildiler. Bugün 64
+	bit işlemciler yaygın kullanılmaktadır. 128 bit işlemlere fazlaca gereksinim duyulmadığı için şimdilik 128 bit işlemciler yaygın biçimde kullanılmamaktadır. 
+	Örneğin aşağıdaki gibi bir c kodu olsun:
+
+
+Pekiyi bir modülde tanımlanmış olan external linkage'a sahip bir global değişkeni başka bir modülde nasıl kullanabiliriz? İşte bunun "extern" yer 
+	belirleyici anahtar sözcük kullanılmaktadır. Bir global değişken extern olarak bildirilirse bu durumda programcı derleyiciye adeta şunu 
+	demektedir: "Derleyici bu global değişken için yer ayırma, çünkü bu global değişken aslında başka bir modülde tanımlanmış bir global değişken.
+	Yani bu global değişken için yer başka bir modülde ayrılmış durumda. Ben bu global değişkeni kullandığımda aslında başka bir modülde yeri ayrılmış 
+	olan o global değişkeni kullanmış oluyorum. Dolayısıyla ben bu global değişkeni kullandığımda bana kızma". İşte derleyici de extern olarak bildirilmiş 
+	bir global değişken için yer ayırmaz. Dolayısıyla extern bildirimi bir tanımlama oluşturmamaktadır. Örneğin:
+
+
+	extern int g_x;
+
+	int main(void)
+	{
+		g_x = 10;
+		printf("%d\n", g_x);
+
+		return 0;
+	}
+
+	Burada derleyici g_x için yer ayırmayacaktır. Çünkü onun yeri zaten başka bir modülde ayrılmıştır. Pekiyi derleyici g_x'in yerini bilmediğine göre 
+	nasıl makine komutları üretmektedir? İşte derleyici extern bir değişken kullanıldığında onun için ürettiği makine kodlarında bazı yerleri boş bırakmaktadır.
+	Ancak nereleri boş bıraktığını amaç dosyanın belli bir kısmına yazmaktadır. Bu değişkeni diğer modüllerde arayıp bulmak ve derleyicinin boş bıraktığı 
+	makine komutlarındaki yerleri doldurmak linker'ın görevidir. Pekiyi linker ya global değişkenin tanımlamasına başka bir modülde bulamazsa ne olacaktır?
+	İşte bu durumda link aşamasında "error" ortaya çıkacaktır. Tabii global değişken başka bir modülde tanımlanmış olabilir ancak "internal" linkage'a sahip 
+	olabilir. Bu durumda da link aşamasında eror oluşacaktır. Şimdi de şöyle bir senaryo üzerinde duralım. Projemiz "a.c" ve "b.c" isimli iki kaynak 
+	dosyadna oluşsun. "a.c" dosyaında da g_x global değişkeni tanımlanmış olsun, "b.c" dosyasında da g_x global değişkenş tanımlanmış olsun. Bu durumda
+	her iki modül de bağımsız olarak derlenir. Her iki modülde de g_x için yer ayrılır. İki derleme de başarılı olur. Ancak link aşamasında sorun çıkar.
+	Çünkü linker link işlemi sırasında aynı isimli birden fazla extern linkage'a sahip değişken görürse "error" oluşturmaktadır. O halde bir global değişken 
+	tek bir modülde extern linkage'a sahip olacak biçimde global olarak tanımlanmalı, kullanılacak modüllerde extern olarak bildirilmelidir. Global değişkenin tüm modllerde 
+	extern bildirilmesi ancak hiçbir modülde global tanımlamanın yapılmaması yine link aşamasında "error" ile sonuçlanacaktır. Benzer biçimde global 
+	değişkenin birden fazla modülde extern linkage'a sahip biçimde global olarak tanımlanması da link aşamasında "error" ile sonuçlanacaktır. 
+	Global değişkenin hangi modülde extern linkagae'a sahip biçimde tanımlanmış olduğunun hiçbir önemi yoktur.
+
+	Anımsanacağı gibi C'de derleyicinin yer ayırdığı bildirimlere "tanımlama (definitions)" dadeniyordu. O halde bildirimde extern kullanıldığında 
+	bu bir tanımlama anlamına gelmemektedir. Örneğin:
+
+	int g_x;				/* hem bildirim hem de tanımlama, g_x için yer ayrılıyor */
+	extern int g_y;			/* bildirim ama tanımlama değil,i g_y için yer ayrılmıyor */
+
+	C standartlarına göre extern bildirimlerinde bildirilen değişkene ilkdeğer verilirse artık bu durum "tanımlama" anlamına gelmektedir Dolayısıyla burada 
+	"extern" anahtar sözcüğünün bir etkisi kalmamaktadırç Örneğin:
+
+	extern int g_x;				/* bildirim tanımlama dğeil */
+	exrtern int g_y = 10;		/* özel durum, artık bu bir tanımalamdır, çünkü ilkdeğer verilmiştir. g_y için yer ayrılacaktır */
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Manuel bir biçimde komut satırından yalnızca değişen kaynak dosyaların derlenerek link edilmesi az sayıda kaynak dosya olduğunda uygulanabilecek 
+	bir yöntemdir. Ancak yüzlerce kaynak dosyanın bulunduğu bir projede (böyle çok proje vardır) build işleminin manuel yapılması çok zahmetlidir. 
+	İşte bu nedenle bu işlemi otomatize eden ve ismine "build automation tools" denilen araçlar kullanılmaktadır. Aslında IDE'ler de arka pşlanda bu build araçlarını 
+	kullanmaktadır.ç Yani örneğin biz Visual Studio'da Ctrl+F5 tuşlarına bastığımızda ya da "Build" menüsünden "Build" seçeneğini seçtiğimizde arka planda
+	aslında IDE Microsoft'un "msbuild" denilen build otomasyon aracını devreye sokmaktadır.
+
+	Build işlemini otomatize eden pek çok araç geliştirilmiştir. Build işlemi programlama dili ile de ilgilidir. Dolayısıyla örneğin Java'da kullanılan 
+	build araçları ile C'de kullanılan build araçları birbirinden farklı olabilmektedir. C ve C++ dünyasında en çok kullanılan build araçları 
+	Microsoft'un "MSBuild" denilen aracı ile GNU'nun "make" denilen aracıdır. Aslında "make" aracının orijinali eski UNIX sistemlerine dayanmaktadır. 
+	Ancak bu araç GNU projesi kapsamında "GNU make" ismiyle yeniden yazılmıştır. Microsoft'un da "make" benzeri bir aracı vardır. Ona da "nmake" denilmektedir. 
+	Tabii Microsoft uzun süredir XML tabanlı "MSBuild" aracını kullanmaktadır. Örneğin Visual Studio da arka planda MSBuild kullanmaktadır. 
+
+	Build araçlarında çalışma biçimi şöyledir: Programcı build işlemi sırasında yapılacak şeyleri belli bir sentaks ve semantiği olan bir dilde
+	bir dosya içerisine yazar. Sonra bu dosyayı işleten programı çalıştırır. Örneğin GNU Make denilen araç ile çalışılırken programcı önce
+	ismine "Makefile" denilen bir dosya oluşturur. Bu dosyanın içerieine yönergeleri yazar. Sonra "make" denilen programı bu dosyayı vererek çalıştırır. 
+	make programı da bu makle dosyasını okur yönergeleri yerine getirir. Make dosyaı oluştmanın bazı yarıntılı kurallaerı vardır. Yani bu küçük bir dil gibidir. 
+	Make aracının kullanımı "Sistem Programlama ve İleri C Uygulamaları" kursunda anlatılmaktadır. Microsoft'un MSBuild aracı da XML tabanlı bir 
+	dil kullanmaktadır. Yine biz Visual Studio IDE'sinde projeye bir kaynak dosya ekleyip, proje ayarlarını değiştirdiğimizde aslında Visual Studio
+	arka planda bir XML dosyasını oluşturmaktadır. MSBuild aracı bu XML dosyasını okuyarak işlemlerini yapmaktadır.
+
+	Bazı build araçlarına "üst düzey build araçları" denilmektedir. Bunlar aslında daha aşağı seviyeli build araçlarını kullanmaktadır. Bunların en ünlüleri 
+	"cmake" ve "qmake" isimli araçlardır. Bu iki araç aslında ürün olarak GNU Make dosyası üretmektedir. Bu araçların ürettikleri make dosyaları ayrıca "make"
+	programıyla işletilmelidir. Ancak "cmake" ve "qmake" araçları daha basit bir yapıya sahiptir. Dolayısıyla aslında bu araçlar "make dosyası yazmayı"
+	otomatize eden daha basit kullanımlıaraçlardır. Örneğin biz yine "cmake" diline uygun bir dosya oluştururuz. Bunu "cmake" programına işletiriz. 
+	"cmake" programı buradan bir GNU make dosyası oluşturur. Bu make dosyasını da "make"n programıyla işleme sokarız. 
+
+	Windows sistemlerinde GNU'nun make programının Windows versiyonu kullanılabilir. Ancak Microsoft'un GNU make programına benzer "nmake" denilen 
+	bir aracı da vardır. Windows sistemlerinde nmake kullanmak daha uygun olabilmektedir. Mac sistemlerinde de ağırlıklı olarak "GNU make", "cmake"
+	ve "qmake" araçları kullanılmaktadır. 
+
+	Aşağıda "sample.c" ve "mample.c" dosyalarından oluşan basit projenin build edilmesi için bir make dosyasu örneği verilmiştir. (make programı default durumda
+	eğer dosya ismi belirtilmezse "Makefile" isimli bir dosyayı işleme sokmaktadır.)
+
+	# Makefile
+
+	test: sample.o mample.o
+		gcc -o test sample.o mample.o
+	sample.o: sample.c
+		gcc -c sample.c
+	mample.o: mample.c
+		gcc -c mample.c
+	clean:
+		rm -f *.o 
+		rm -f test
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	static yer belirleyicisi yerel değişkenlerle ve global değişkenlerle kullanılabilmektedir. Ancak parametre değişkenleriyle kullanılamamaktadır. 
+	static belirleyicisinin yerel değişkenlerle kullanımı "static yerel değişkenler", global değişkenlerle kullanımı "static global değişkenler"
+	biçiminde isimlendirilebilir. 
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Bir global değişken "static" anahtar sözcüğü ile tanımlanırsa global değişken "internal linkage" özelliğine sahip olur. Yani bu global değişken başka bir 
+	modülde extern olarak bildirilse bile kullanılamaz. Yalnızca o modülde (tanslation unit) kullanılabilir. 
+
+	Aynı durum fonksiyonlar için de geçerlidir. Çünkü fonksiyonlar da "global değişkenler gibi" ele alınmaktadır. Yani biz bir fonksiyonun tanımlamasında
+	static belirleyicisini kullanırsak o fonksiyonu yalnızca o modülde herhangi bir yerde çağırabiliriz. Başka bir modülden o fonksiyonu çağıramayız.  
+	static fonksiyonlar "internal" linkage özelliğine sahiptir. 
+
+	Farklı modüllerde (translation unit'lerde) aynı isimli static global değişkenler ya da fonksiyonlar bulunabilir. Bu durum link aşamasında bir sorun oluşturmaz. 
+
+	Aşağıdaki örnekte her iki modülde de g_x isminde static global nesneler vardır. Ancak her iki modüldeki nesneler farklı nesnelerdir. 
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/* sample.c */
+
+#include <stdio.h>
+
+void foo(void);
+void bar(void);
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Adrese gerei dönen bir fonksiyon için üç durum söz konusu olabilir:
+
+	1) Fonksiyon bizim argüman olarak gverdiğimiz adresin aynısına geri dönüyor olabilir. Bizim ona verdiğimiz nesne fonksiyonun çıkışında da yaşadığına göre bir sorun 
+	yoktur. Örneğin:
+
+	#include <stdio.h>
+
+	char *revstr(char *str)
+	{
+		int n;
+		char ch;
+
+		for (n = 0; str[n] != '\0'; ++n)
+			;
+
+		for (int k = 0; k < n / 2; ++k) {
+			ch = str[k];
+			str[k] = str[n - k - 1];
+			str[n - k - 1] = ch;
+		}
+
+		return str;
+
+	}
+
+	int main(void)
+	{
+		char s[] = "ankara";
+		char *str;
+
+		str = revstr(s);
+
+		puts(s);
+		puts(str);
+
+		return 0;
+	}
+
+
+	Burada revstr zaten bizim verdiğimiz adrese geri dönmektedir. Kodd herhangi bir tanısmsız davranış yıktur. 
+
+	2) Fonksiyon dinamik bir biçimde tahsis edilen bir alanın adresiyle geri dönüyor olabilir. Fonksiyon sonlansa bile dinamik alan yaşamaya evan edeceğine göre
+	burada da bir sorun yoktur. Ancak bu durumda alanın free getirilmesi fonksiyonu çağıranın sorumluluğunda olur. Örneğin:
+
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+
+	char *getname(void)
+	{
+		char buf[1024];
+		char *name;
+
+		printf("Adi soyadi:");
+		gets(buf);
+
+		if ((name = (char *)malloc(strlen(buf) + 1)) == NULL)
+			return NULL;
+
+		strcpy(name, buf);
+
+		return name;
+	}
+
+	int main(void)
+	{
+		char *name;
+
+		if ((name = getname()) == NULL) {
+			fprintf(stderr, "cannot allocate memory!..\n");
+			exit(EXIT_FAILURE);
+		}
+
+		puts(name);
+
+		free(name);
+
+		return 0;
+	}
+
+	Buradaki getame fonksinu her çağrıldığında bize farklı bir adres verecektir. 
+
+	3) Fonksiyon static yerel bir nesnenin ya da dizinin adresiyle geri dönmektedir. Bu durumda fonksiyonu her çağırdığımızda bize hep aynı adresi verecektir. Örneğin:
+
+	#include <stdio.h>
+
+	char *getname()
+	{
+		static char name[64];
+
+		printf("Adi soyadi:");
+		gets(name);
+
+		return name;        /* tamamen normal ve geçerli bir durum, dizi static */
+	}
+
+	int main(void)
+	{
+		char *name;
+
+		name = getname();
+		printf("%p, %s\n", name, name);
+
+		name = getname();
+		printf("%p, %s\n", name, name);
+
+		return 0;
+	}
+
+static yerel nesnelerin adresleriyle geri dönmek çok thread'li uygulamalarda fonksiyonun "thread güvenli (thread safe)" olmamamasına yol açmaktadır. 
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	static yerel nesnelerin adresleriyle geri dönen fonksiyonlara iyi bir örnek "localtime" isimli standart C fonksiyonudur. Fonksiyonun prototipi <time.h>
+	dosyası içerisindedir:
+
+	struct tm *localtime(const time_t *pt);
+
+	Burada const anahtar sözcüğü izleyen bölümlerde ele alınmaktadır. Fonksiyon bizden time fonksiyonundan elde edilmiş olan değerin bulunduğu nesnnesin 
+	adresini almaktadır. Pek çok sistemde time fonksiyonu 01/01/1970'ten geçen saniye sayısını vermektedir. localtime fonksiyonu bilgisayarın saatine bakmaz. 
+	time fonksiyonu bilgisayarın saatine bakmaktadır. localtime fonksiyonu bu saniye sayısını yıl, ay, gün, saat, dakika, saniye bileşenlerine ayırır. 
+	struct tm isimli static bir yapı nesnesinin içerisine yerleştirir ve bu static yapı nesnesinin adresiyle geri döner. struct tm yapısı da <time.h> 
+	dosyası içerisinde aşağıdaki gibi bildirilmiştir:
+
+	struct tm {
+		int tm_sec;         /* seconds */
+		int tm_min;         /* minutes */
+		int tm_hour;        /* hours */
+		int tm_mday;        /* day of the month */
+		int tm_mon;         /* month */
+		int tm_year;        /* year */
+		int tm_wday;        /* day of the week */
+		int tm_yday;        /* day in the year */
+		int tm_isdst;       /* daylight saving time */
+	};
+
+	Yapının tm_sec, tm_min ve tm_hour elemanları zaman bilgisine ilişkindir. tm_mday elemanı ayın kaçıncı günü olduğunu belirtir. tm_mon elemanı 
+	0 orijinlidir ve ayı belirtmektedir. tm_year elemanı 1900 orijinli olarak yılı belirtmektedir. tm_wday tarihin haftanın kaçıcncı günü olduğunu belirtir. 
+	Burada 0 = Pazar anlamına gelmektedir. tm_yday elemanı tarihin 0 orijinli olarak o yılın kaçıncı günü olduğunu belirtmektedir. tm_isdst elemanı pozitif bir değerdeyse 
+	tarih "ileri saat uygulamasının içerisinde" kalmaktadır. 0 ise "ileri saat uygulamasının içerisinde" kalmamaktadır. Negatif ise bu konuda bir bilgi yoktur. 
+	localtime fonksiyonu geçersiz bir parametre için NULL adrese geri dönmektedir. 
+
+	Aşağıdaki örnekte önce time fonksiyonu ile epoch'tan (01/=1/1970) geçen saniye sayısı bulunuğp localtime fonksiyonu ile tarih zaman bilgisine dönüştürülmüştür. 
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+#include <time.h>
+
+int main(void)
+{
+	time_t t;
+	struct tm *pt;
+	char *days[] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+
+	t = time(NULL);
+	pt = localtime(&t);
+
+	printf("%02d/%02d/%04d %02d:%02d:%02d - %s\n", pt->tm_mday, pt->tm_mon + 1, pt->tm_year + 1900, pt->tm_hour, pt->tm_min, pt->tm_sec, days[pt->tm_wday]);
+
+	return 0;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	volatile niteleyicisi nadir biçimde kullanılmaktadır. Eğer çok thread'li uygulamalar ya da birtakım kesme kodlarının oluşturulduğu uygulamalar söz konusu 
+	değilse volatile niteleyicisine gereksinim duyulmaz. 
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	volatile niteleyicisi de göstericlerle kullanılabilmektedir. Tıpkı const niteleyicisinde olduğu gibi kendisi volatile olan, gösterdiği yer volatile olan,
+	hem kendisi hem gösterdiği yer volatile olan göstericiler söz konusu olabilmektedir. Öneğin:
+
+	volatile int *pi;					/* kendisi değil, gösterdiği yer volatile olan gösterici */
+	int * volatile pi;					/* gösterdiği yer değil kendisi volatile olan gösterici */
+	volatile int * volatile pi;			/* hem kendisi hem de gösterdiği yer volatile olan gösterici */
+
+	Göstericinin gösterdiği yerin volatile olması demek o gösterici ile * ya da [] oprratörü kullanılarak o göstericinin eriştiği yerin volatile olması demektir. 
+	Yani bu durumda derleyici ne zaman göstsricinin gösterdiği yere erişilse onu yeniden taze taze bellekten yeniden alır. Örneğin:
+
+	int a = 10, b;
+	volatile int *pi = &a;
+	...
+
+	a = *pi + 10;
+	b = *pi + 20;
+
+	Derleyici bu durumda *pi bir yazmaçta olsa bile her defasında yeniden pi'nin gösterdiği yere erişecektir. 
+
+	volatile anahtar sözcğü de türün bir parçasını oluşturmaktadır. Örneğin:
+
+	volatile int a;
+
+	Burada a "volatile int" türündendir. Tamamen const niteleyicisinde olduğu gibi bir kısıt volatile niteleyicisinde de vardır. Yani biz volatile bir nesnenin adresini
+	volatile olmayan bir göstericiye atayamayız. Ancak volatile olmayan bir bir nesnenin adresini volatile bir göstericiye atayabiliriz. Başka bir deyişle 
+	volatile T * türünden T * türüne otomatik dönüştürme yoktur, ancak T * türünden volatile T * türüne otomatik dönüştürme vardır. 
+	
+	Örneğin:
+
+	int a;
+	volatile int b;
+	int *pi1;
+	volatile int *pi2;
+
+	pi1 = &b;		/* geçersiz, volatile int * türünden int * türüne otomatik dönüştürme yoktur. */
+	pi2 = &b;		/* geçerli */
+	pi2 = &a;		/* geçerli, int * türünden volatile int * türüne otomatik dönüştürme vardır */
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+/*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Bir byte'tan uzun olan tamsayı türünden nesnelerin bellekteki yerleşimleri işlemcidden işlemciye değişebilmektedir. Buna işlemcinin "endian'lığı (endianness)"
+	denilmektedir. Intel işlemcvilerinde sayının düşük anlamlı byte'ı düşük adreste olacak biçimde yerleşim uygulanmaktadır. Power PC, SPARC, Alpha 
+	gibi işlemcilerde sayının yüksek anlamı byte değeri düşük adreste tutulur. Örneğin:
+
+	int a = 0x12345678;
+
+	Intel işlemcilerinde bu int içerisindeki byte'larşöyle tutulacaktır:
+
+	78
+	56
+	34
+	12
+
+	Halbuki PowerPC işlemcilerinde tutulma şöyle olacaktır:
+
+	12
+	34
+	56
+	78
+
+	Sayının düşük anlamlı byte değerinin düşük adreste tutulmasına "little endian" denilmektedir. Sayının yüksek anlamlı byte değerinin düşük adreste tutulmasına ise
+	"big endian" denir. Burada "endian" sözcüğü alakasız bir biçimde uydurulmuştur. 
+
+	Bazı işlemciler her iki endian'lığa göre de çalışabilecek biçimde tasarlanmış durumdadır. Örneğin ARM işlemcileri default durumda "little endian" 
+	çalışmaktadır. Ancak işlemcinin modunu değiştirerek onu "big endian" çalışacak biçime getirebiliriz. Little edian ve big endian tasarım arasında
+	bir performans farklılığı yoktur. 
+	
+	Endianlık'ta byte bitleri arasında da bir farklılık yoktur. Byte'ların birbirlerine göre dizilimleri arasında farklılık söz konusudur. Biz örneğin bir int nesnenin 
+	adresini aldığımızda her zaman en düşük adresi elde ederiz. O adresteki byte'a bakarak işlemcimizin litlle endian mı yoksa big endian mı olduğunu anlayabiliriz. Örneğin:
+
+	int a = 0x12345678;
+	unsigned char *pc;
+
+	pc = (unsigned char *)&a;
+	printf("%02X\n", *pc);		/* Little endian ise 78, big endian ise 12 görürüz */
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+
+int main(void)
+{
+    int a = 0x12345678;
+    unsigned char *pc;
+
+    pc = (unsigned char *) &a;
+    printf("%02X\n", *pc);      /* little endian ise 78, big endian ise 12 */
+
+    return 0;
+}
+
+*---------------------------------------------------------------------------------------------------------------------------------------------------
+	Standartalara göre yapıların bit alanı elemanları int, unsigned int ya da _Bool türden olabilir. Ancak diğer türlerin bit alanı elemanı olarak 
+	kullanılıp kullanılmayacağı derleyileri yazanların isteğine bırakılmıştır. Bit alanı elemanı int (signed int) türdense yine ikiye tümleyen aritmetiği
+	kullanılır. Örneğin şöyle bir bit alanı elemanı olsun:
+
+	int a: 3;
+
+	Burada a elemanı işaret biti dahil olmak üzere 3 bittir. 3 bit ile yazılabilecek işaretli tamsayı sınırı şöyledir:
+
+	100		-4
+	011		+3
+
+	Bunun genel formününün bit sayısı n olnak üzere şöyle olduğunu biliyorsunuz:
+
+	[- iki üzeri (n - 1), + iki üzeri (n - 1) - 1]
+
+	Bit alanı elemanı unsigned int türündne olsaydı bu durumda işaret biti söz konusu olmayacaktı. Örneğin:
+
+	unisgned a: 3;
+
+	Burada a bit alanı elemanının sayı sınırı şöyle olacaktır:
+
+	000		0
+	111		+7
+----------------------------------------------------------------------------------------------------------------------------------------------------*/
+

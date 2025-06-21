@@ -1,0 +1,1 @@
+kalas yok, kutuk koy, salak!
